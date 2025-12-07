@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -7,11 +7,13 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Rating from '@mui/material/Rating';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Addfeedback = () => {
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const editData = location.state?.feedback;   // ← comes from Home Edit button
 
   const [feedback, setFeedback] = useState({
     coursename: "",
@@ -20,10 +22,31 @@ const Addfeedback = () => {
     comments: ""
   });
 
+  // ⭐ If editing, pre-fill form
+  useEffect(() => {
+    if (editData) {
+      setFeedback({
+        coursename: editData.coursename,
+        duration: editData.duration,
+        rating: editData.rating,
+        comments: editData.comments,
+      });
+    }
+  }, [editData]);
+
+  // ⭐ Submit handler (Add or Update)
   const handleSubmit = async () => {
     try {
-      await axios.post("http://localhost:3000/feedback/add", feedback);
-      alert("Feedback submitted!");
+      if (editData) {
+        // UPDATE mode (PUT)
+        await axios.put(`http://localhost:3000/feedback/update/${editData._id}`, feedback);
+        alert("Feedback updated!");
+      } else {
+        // ADD mode (POST)
+        await axios.post("http://localhost:3000/feedback/add", feedback);
+        alert("Feedback submitted!");
+      }
+
       navigate("/");
     } catch (err) {
       alert("Error submitting form");
@@ -33,7 +56,10 @@ const Addfeedback = () => {
   return (
     <center>
       <Card style={{ width: "700px", marginTop: "80px" }}>
-        <Typography variant="h5">FEEDBACK FORM</Typography>
+        
+        <Typography variant="h5">
+          {editData ? "EDIT FEEDBACK" : "ADD FEEDBACK"}
+        </Typography>
 
         <Card style={{ width: "90%", background: "#d8edf3", marginTop: 20 }}>
           <CardContent>
@@ -82,7 +108,7 @@ const Addfeedback = () => {
 
         <CardActions>
           <Button variant="contained" onClick={handleSubmit}>
-            Submit
+            {editData ? "Update" : "Submit"}
           </Button>
         </CardActions>
       </Card>
