@@ -13,7 +13,7 @@ const Addfeedback = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const editData = location.state?.feedback;   // ← comes from Home Edit button
+  const editData = location.state?.feedback;   
 
   const [feedback, setFeedback] = useState({
     coursename: "",
@@ -22,7 +22,6 @@ const Addfeedback = () => {
     comments: ""
   });
 
-  // ⭐ If editing, pre-fill form
   useEffect(() => {
     if (editData) {
       setFeedback({
@@ -34,15 +33,12 @@ const Addfeedback = () => {
     }
   }, [editData]);
 
-  // ⭐ Submit handler (Add or Update)
   const handleSubmit = async () => {
     try {
       if (editData) {
-        // UPDATE mode (PUT)
         await axios.put(`http://localhost:3000/feedback/update/${editData._id}`, feedback);
         alert("Feedback updated!");
       } else {
-        // ADD mode (POST)
         await axios.post("http://localhost:3000/feedback/add", feedback);
         alert("Feedback submitted!");
       }
