@@ -19,13 +19,11 @@ const Home = () => {
       .catch((err) => console.log("Error:", err));
   }, []);
 
-  // 🔹 DELETE handler
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this feedback?")) return;
 
     try {
       await axios.delete(`http://localhost:3000/feedback/delete/${id}`);
-      // remove from UI
       setData((prev) => prev.filter((item) => item._id !== id));
       alert("Feedback deleted");
     } catch (err) {
@@ -75,7 +73,7 @@ const Home = () => {
                   size="small"
                   variant="outlined"
                   color="error"
-                  onClick={() => handleDelete(item._id)} // 🔹 here
+                  onClick={() => handleDelete(item._id)}
                 >
                   X
                 </Button>
