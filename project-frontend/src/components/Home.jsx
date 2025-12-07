@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Button from "@mui/material/Button";
 import "./Home.css";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [data, setData] = useState([]);
+  const navigate = useNavigate();
+
 
   useEffect(() => {
     axios
@@ -59,9 +62,13 @@ const Home = () => {
               <td>{item.rating}</td>
               <td>{item.comments}</td>
               <td>
-                <Button size="small" variant="outlined">
-                  Edit
-                </Button>
+                <Button
+  size="small"
+  variant="outlined"
+  onClick={() => navigate("/add", { state: { feedback: item } })}
+>
+  Edit
+</Button>
               </td>
               <td>
                 <Button
