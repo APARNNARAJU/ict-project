@@ -9,15 +9,19 @@ const Home = () => {
   const navigate = useNavigate();
 
 
-  useEffect(() => {
-    axios
-      .get("http://localhost:3000/feedback/get")
-      .then((res) => {
-        console.log("Backend response:", res.data);
-        setData(res.data);
-      })
-      .catch((err) => console.log("Error:", err));
-  }, []);
+ useEffect(() => {
+  axios
+    .get("http://localhost:3000/feedback/get")
+    .then((res) => {
+      const updated = res.data.map((item, index) => ({
+        ...item,
+        courseId: `C0${index + 1}` // created once
+      }));
+      setData(updated);
+    })
+    .catch((err) => console.log("Error:", err));
+}, []);
+
 
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this feedback?")) return;
@@ -54,7 +58,7 @@ const Home = () => {
         <tbody>
           {data.map((item, index) => (
             <tr key={item._id}>
-              <td>C00{index + 1}</td>
+              <td>{item.courseId}</td>
               <td>{item.coursename}</td>
               <td>{item.duration} hrs</td>
               <td>{item.rating}</td>
